@@ -165,6 +165,7 @@ import org.datanucleus.store.rdbms.table.ProbeTable;
 import org.datanucleus.store.rdbms.table.Table;
 import org.datanucleus.store.rdbms.table.TableImpl;
 import org.datanucleus.store.rdbms.table.ViewImpl;
+import org.datanucleus.store.rdbms.valuegenerator.MaxGenerator;
 import org.datanucleus.store.rdbms.valuegenerator.SequenceTable;
 import org.datanucleus.store.rdbms.valuegenerator.TableGenerator;
 import org.datanucleus.store.schema.SchemaAwareStoreManager;
@@ -1969,12 +1970,13 @@ public class RDBMSStoreManager extends AbstractStoreManager implements BackedSCO
             {
                 // RDBMS-based generator so set the connection provider
                 final RDBMSStoreManager thisStoreMgr = this;
+                final boolean forceUsePM = generator instanceof MaxGenerator;
                 ValueGenerationConnectionProvider connProvider = new ValueGenerationConnectionProvider()
                 {
                     ManagedConnection mconn;
                     public ManagedConnection retrieveConnection()
                     {
-                        if (getStringProperty(PropertyNames.PROPERTY_VALUEGEN_TXN_ATTRIBUTE).equalsIgnoreCase("UsePM"))
+                        if (forceUsePM || getStringProperty(PropertyNames.PROPERTY_VALUEGEN_TXN_ATTRIBUTE).equalsIgnoreCase("UsePM"))
                         {
                             this.mconn = thisStoreMgr.getConnection(ec);
                         }
